@@ -1,0 +1,25 @@
+.loading {
+  color: transparent;
+  &-circle {
+    &:after {
+      content: "";
+      border: 2px solid $brand-primary;
+      border-top-color: rgba(0, 0, 0, 0) !important;
+      border-left-color: rgba(0, 0, 0, 0) !important;
+      width: 30px;
+      background: none !important;
+      height: 30px;
+      border-radius: 50%;
+      animation: loadingSpinner 1s infinite linear;
+    }
+  }
+}
+
+@keyframes loadingSpinner {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
