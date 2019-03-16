@@ -28,3 +28,8 @@ Generate the production build(in build folder of the project)
 yarn build
 ```
 Once build is generated, run any local server(Python, etc) inside the build directory, and open the localhost url on the browser.
+
+```sh
+ yarn global add serve
+ serve -s build
+```
