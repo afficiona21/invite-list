@@ -2,60 +2,24 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import ShellHeader from './../components/ShellHeader';
-import ShellSidebar from './../components/ShellSidebar';
-import ContactsList from './../components/ContactsList';
-import Pagination from './../components/Pagination';
+import Loader from './../components/Loader';
+import MessageBox from './../components/MessageBox';
+import List from './../components/List';
 
-import actions from './../actions';
+import * as actions from './../actions';
 
 class App extends Component {
   constructor(props) {
-    super(props);
-    // Setting the defaults for the form and list header
-    this.state = {
-      sortBy: 'id',
-      orderBy: 'asc',
-      searchVal: ''
-    };
+    super();
 
-    this.handlePagination = url => {
-      this.props.actions.fetchContacts(null, url);
-    };
-
-    this.onChange = e => {
-      this.setState({
-        searchVal: e.target.value
-      });
-    };
-
-    this.onSearchSubmit = e => {
-      e.preventDefault();
-      this.props.actions.fetchContacts(
-        this.state.searchVal,
-        null,
-        this.state.sortBy,
-        this.state.orderBy
-      );
-    };
-
-    this.handleSortAction = (sortBy, orderBy) => {
-      this.setState({
-        sortBy,
-        orderBy
-      });
-      this.props.actions.fetchContacts(
-        this.state.searchVal,
-        null,
-        sortBy,
-        orderBy
-      );
+    this.getCustomers = () => {
+      this.props.actions.fetchCustomers();
     };
   }
 
   componentWillMount() {
-    // Fetching contacts with the default state value on app load
-    this.props.actions.fetchContacts(this.state.searchVal);
+    // Fetching customers on app mount
+    this.getCustomers();
   }
 
   render() {
@@ -64,22 +28,26 @@ class App extends Component {
       <div className="app">
         <div className="app__container">
           <div className="shell">
-            <ShellSidebar />
-
             <div className="shell__content">
-              <ShellHeader
-                onSearchSubmit={this.onSearchSubmit}
-                value={this.state.searchVal}
-                onChange={this.onChange}
-              />
 
-              <div className="shell__body">
-                <ContactsList
-                  handleSortAction={this.handleSortAction}
-                  Contacts={this.props.Contacts}
-                />
-              </div>
-              
+              {(() => {
+                if (this.props.IsLoading) {
+                  return <Loader />
+                }
+
+                if (this.props.Error) {
+                  return <MessageBox danger text={this.props.Error} action={this.getCustomers} />
+                }
+
+                if (!this.props.Data.size) {
+                  return <MessageBox danger text="No customers to show!" action={this.getCustomers} />
+                }
+
+                return (
+                  <List data={this.props.Data} />
+                );
+              })()}
+
             </div>
           </div>
         </div>
@@ -88,9 +56,11 @@ class App extends Component {
   }
 }
 
-function mapStateToProps({ Contacts }) {
+function mapStateToProps({ Customers }) {
   return {
-    Contacts
+    IsLoading: Customers.get('isFetching'),
+    Data: Customers.get('data'),
+    Error: Customers.get('error')
   };
 }
 

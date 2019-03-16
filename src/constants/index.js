@@ -1,3 +1,2 @@
-// Base url for the API
-// https://callbooth.herokuapp.com is the API for production env.
-export const API_BASE_URL = 'http://localhost:8080';
+// Url for the API. Intentional delay of 2s to illustrate the loading state
+export const CUSTOMERS_FETCH_API = 'https://www.mocky.io/v2/5c8c9f0b31000087044c24ac?mocky-delay=2000ms';

@@ -1,12 +1,16 @@
 import React from 'react';
 import {
   renderIntoDocument,
-  scryRenderedDOMComponentsWithClass
+  scryRenderedDOMComponentsWithClass,
+  scryRenderedComponentsWithType
 } from 'react-dom/test-utils';
 import { expect } from 'chai';
 import { fromJS } from 'immutable';
 import { Provider } from 'react-redux';
 import AppContainer from '../../src/containers/App';
+import MessageBox from '../../src/components/MessageBox';
+import Loader from '../../src/components/Loader';
+import List from '../../src/components/List';
 
 function createMockStore(state) {
   return {
@@ -17,65 +21,137 @@ function createMockStore(state) {
 }
 
 describe('Component: App container', () => {
-  let Contacts;
-  let contactsFetched;
-  let onSearchSubmit;
+  let customersWhileFetching;
+  let customersWhenSuccessfullyFetched;
+  let customersOnFetchingError;
+  let customersNotFound;
   let actions;
   let store;
+  let CustomersFetched;
+  let Customers;
 
   beforeEach(() => {
-    contactsFetched = false;
-    Contacts = fromJS({
-      data: {
-        list: []
-      },
-      isFetching: true
+
+    Customers = fromJS({
+      isFetching: true,
+      data: null,
+      error: null
+    });
+
+    customersWhileFetching = {
+      data: null,
+      error: null,
+      IsLoading: 123
+    };
+
+    customersWhenSuccessfullyFetched = fromJS({
+      data: [{
+        user_id: 1,
+        name: 'Aman Pandey',
+        latitude: '53.55',
+        longitude: '-100.34'
+      }],
+      isFetching: false,
+      error: null
+    });
+
+    customersOnFetchingError = fromJS({
+      data: null,
+      isFetching: false,
+      error: 'Something went wrong!'
+    });
+
+    customersNotFound = fromJS({
+      data: [],
+      isFetching: false,
+      error: null
     });
 
     actions = {
-      fetchContacts: () => true
+      fetchCustomers: () => true
     };
 
     store = createMockStore({
-      Contacts
+      Customers
     });
 
-    onSearchSubmit = () => {
-      contactsFetched = true;
-    };
   });
 
   it('Has all the sub modules loaded', () => {
-    const component = renderIntoDocument(
+    const appComponent = renderIntoDocument(
       <Provider store={store}>
         <AppContainer
-          Contacts={Contacts}
+          Customers={Customers}
           actions={actions}
-          onSearchSubmit={onSearchSubmit}
         />
       </Provider>
     );
 
     // Checking if all the submodules are loaded in the DOM
-    const shellSidebar = scryRenderedDOMComponentsWithClass(
-      component,
-      'shell__sidebar'
+    const appContainer = scryRenderedDOMComponentsWithClass(
+      appComponent,
+      'app__container'
     );
-    const shellHeader = scryRenderedDOMComponentsWithClass(
-      component,
-      'shell__header'
+    const shellContainer = scryRenderedDOMComponentsWithClass(
+      appComponent,
+      'shell__content'
     );
-    const contactsList = scryRenderedDOMComponentsWithClass(
-      component,
-      'contacts__list'
-    );
-    const pagination = scryRenderedDOMComponentsWithClass(
-      component,
-      'pagination'
-    );
-    expect(shellSidebar).to.have.lengthOf(1);
-    expect(shellHeader).to.have.lengthOf(1);
-    expect(contactsList).to.have.lengthOf(1);
-    expect(pagination).to.have.lengthOf(1);
+    expect(appContainer).to.have.lengthOf(1);
+    expect(shellContainer).to.have.lengthOf(1);
   });
+
+  it('Shows loading screen when customers are being fetched', () => {
+    const app = renderIntoDocument(
+      <Provider store={store}>
+        <AppContainer />
+      </Provider>
+    );
+
+    let list = scryRenderedComponentsWithType(app, List);
+    let loader = scryRenderedComponentsWithType(app, Loader);
+    let errorMessageBox = scryRenderedComponentsWithType(app, MessageBox);
+
+    expect(loader).to.have.lengthOf(1);
+    expect(list).to.have.lengthOf(0);
+    expect(errorMessageBox).to.have.lengthOf(0);
+  });
+
+  it('Shows Error message when customers fetch has failed', () => {
+    store = createMockStore({
+      Customers: customersOnFetchingError
+    });
+    const app = renderIntoDocument(
+      <Provider store={store}>
+        <AppContainer />
+      </Provider>
+    );
+
+    let list = scryRenderedComponentsWithType(app, List);
+    let loader = scryRenderedComponentsWithType(app, Loader);
+    let errorMessageBox = scryRenderedComponentsWithType(app, MessageBox);
+
+    expect(loader).to.have.lengthOf(0);
+    expect(list).to.have.lengthOf(0);
+    expect(errorMessageBox).to.have.lengthOf(1);
+  });
+
+  it('Shows customers List when customers fetch is successful', () => {
+    store = createMockStore({
+      Customers: customersWhenSuccessfullyFetched
+    });
+    const app = renderIntoDocument(
+      <Provider store={store}>
+        <AppContainer />
+      </Provider>
+    );
+
+    let list = scryRenderedComponentsWithType(app, List);
+    let loader = scryRenderedComponentsWithType(app, Loader);
+    let errorMessageBox = scryRenderedComponentsWithType(app, MessageBox);
+
+    expect(loader).to.have.lengthOf(0);
+    expect(list).to.have.lengthOf(1);
+    expect(errorMessageBox).to.have.lengthOf(0);
+  });
+
 });

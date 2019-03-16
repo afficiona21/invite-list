@@ -1,0 +1,28 @@
+.message-box {
+  padding: $base-px-value $base-px-value * 2;
+  border-radius: 4px;
+  border: 1px solid $text-color;
+  color: $text-color;
+  align-self: center;
+  text-align: center;
+
+  &--danger {
+    border-color: $brand-danger;
+    color: $brand-danger;
+    background: rgba($brand-danger, 0.04);
+  }
+
+  &--success {
+    border-color: $brand-success;
+    color: $brand-success;
+    background: rgba($brand-success, 0.04);
+  }
+
+  &__action {
+    color: $brand-primary;
+    cursor: pointer;
+    margin: 12px 0 0;
+    font-size: 12px;
+    text-transform: uppercase;
+  }
+}

@@ -1,31 +1,22 @@
-import { fetchContactsApi } from '../api';
+import { fetchCustomersApi } from '../api';
 import * as TYPES from './../constants/ActionTypes';
 
 /**
- * Action to trigger fetching of contacts list. It dispatches `CONTACTS_SEARCH_INIT`,
- * `CONTACTS_SEARCH_SUCCESS` and `CONTACTS_SEARCH_ERROR` actions to Redux.
- *
- * @param q {String} query param search string
- * @param url {String} url for the api endpoint.
- * @param sortBy {String} sortBy query param to sort the list
- * @param orderBy {String} orderBy query param to order the sorted list
+ * Action to trigger fetching of customers list. It dispatches `CUSTOMERS_FETCH_INIT`,
+ * `CUSTOMERS_FETCH_SUCCESS` and `CUSTOMERS_FETCH_ERROR` actions to Redux.
  */
-const fetchContacts = (q, url, sortBy, orderBy) => dispatch => {
-  dispatch({ type: TYPES.CONTACTS_SEARCH_INIT });
+export const fetchCustomers = () => dispatch => {
+  dispatch({ type: TYPES.CUSTOMERS_FETCH_INIT });
 
-  return fetchContactsApi().then(
-    response => {
+  return fetchCustomersApi()
+    .then(res => res.text())
+    .then(data => {
       dispatch({
-        type: TYPES.CONTACTS_SEARCH_SUCCESS,
-        data: response
+        type: TYPES.CUSTOMERS_FETCH_SUCCESS,
+        data
       });
-    },
-    err => {
-      dispatch({ type: TYPES.CONTACTS_SEARCH_ERROR, err });
-    }
-  );
-};
-
-export default {
-  fetchContacts
+    })
+    .catch(error => {
+      dispatch({ type: TYPES.CUSTOMERS_FETCH_ERROR, error });
+    });
 };
