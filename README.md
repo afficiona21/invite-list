@@ -20,7 +20,7 @@ yarn start
 OR yarn start
 ```
 
-### Tes
+### Test
 ```sh
 yarn test
 ```
