@@ -20,6 +20,11 @@ yarn start
 OR yarn start
 ```
 
+### Tes
+```sh
+yarn test
+```
+
 ### Production
 Generate the production build(in build folder of the project)
 ```sh
