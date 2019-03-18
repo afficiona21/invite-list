@@ -68,7 +68,6 @@
     "chai": "^4.1.2",
     "chai-immutable": "^1.6.0",
     "conventional-github-releaser": "2.0.0",
-    "copyfiles": "^1.2.0",
     "enzyme": "3.1.0",
     "enzyme-adapter-react-16": "^1.1.1",
     "eslint": "4.13.1",
@@ -88,7 +87,6 @@
     "node-sass-chokidar": "0.0.3",
     "prettier": "1.9.2",
     "redux-mock-store": "^1.5.3",
-    "replace-in-file": "^3.0.0",
     "sinon": "2.3.0",
     "standard-version": "4.2.0"
   },
