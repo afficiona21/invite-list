@@ -2,7 +2,7 @@
   "name": "invites",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://afficiona21.github.io/invites",
+  "homepage": "https://afficiona21.github.io/invites/",
   "dependencies": {
     "classnames": "2.2.5",
     "cross-fetch": "^3.0.1",
