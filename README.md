@@ -2,6 +2,7 @@ Invites List - A Guest list app for the office party
 ===========
 
 > An online guest list app built on React
+Link: https://afficiona21.github.io/invites/
 
 ## Installation and run
 You need node.js and npm/yarn to run the project locally.
