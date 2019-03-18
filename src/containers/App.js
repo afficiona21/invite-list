@@ -31,18 +31,22 @@ class App extends Component {
             <div className="shell__content">
 
               {(() => {
+                // Show loader when the customers are being fetched
                 if (this.props.IsLoading) {
                   return <Loader />
                 }
 
+                // Show error message if customers list failed in fetching
                 if (this.props.Error) {
                   return <MessageBox danger text={this.props.Error} action={this.getCustomers} />
                 }
 
+                // Show message when no customers are invited
                 if (!this.props.Data.size) {
                   return <MessageBox danger text="No customers to show!" action={this.getCustomers} />
                 }
 
+                // Else, show the customers list
                 return (
                   <List data={this.props.Data} />
                 );
