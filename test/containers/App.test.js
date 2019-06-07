@@ -2,15 +2,13 @@ import React from 'react';
 import {
   renderIntoDocument,
   scryRenderedDOMComponentsWithClass,
-  scryRenderedComponentsWithType
+  scryRenderedComponentsWithType,
 } from 'react-dom/test-utils';
 import { expect } from 'chai';
 import { fromJS } from 'immutable';
 import { Provider } from 'react-redux';
 import AppContainer from '../../src/containers/App';
-import MessageBox from '../../src/components/MessageBox';
-import Loader from '../../src/components/Loader';
-import List from '../../src/components/List';
+import { getExchangeRate } from '../../src/actions/exchange';
 
 function createMockStore(state) {
   return {
@@ -20,138 +18,76 @@ function createMockStore(state) {
   };
 }
 
-describe('Component: App container', () => {
-  let customersWhileFetching;
-  let customersWhenSuccessfullyFetched;
-  let customersOnFetchingError;
-  let customersNotFound;
+describe ('Component: App container', () => {
   let actions;
   let store;
-  let CustomersFetched;
-  let Customers;
+  let Currencies;
+  let UI;
 
-  beforeEach(() => {
-
-    Customers = fromJS({
-      isFetching: true,
-      data: null,
-      error: null
+  beforeEach (() => {
+    Currencies = fromJS ({
+      list: [
+        {
+          id: 'GBP',
+          name: 'GBP',
+          balance: '43.86',
+          isSource: true,
+        },
+        {
+          id: 'EUR',
+          name: 'EUR',
+          balance: '4.12',
+          isTarget: true,
+        },
+      ],
     });
 
-    customersWhileFetching = {
-      data: null,
-      error: null,
-      IsLoading: 123
-    };
-
-    customersWhenSuccessfullyFetched = fromJS({
-      data: [{
-        user_id: 1,
-        name: 'Aman Pandey',
-        latitude: '53.55',
-        longitude: '-100.34'
-      }],
-      isFetching: false,
-      error: null
-    });
-
-    customersOnFetchingError = fromJS({
-      data: null,
-      isFetching: false,
-      error: 'Something went wrong!'
-    });
-
-    customersNotFound = fromJS({
-      data: [],
-      isFetching: false,
-      error: null
+    UI = fromJS ({
+      currencyMenu: {
+        isOpen: false,
+      },
+      toastr: {
+        isActive: false,
+        text: null,
+      },
     });
 
     actions = {
-      fetchCustomers: () => true
+        getExchangeRate,
     };
 
     store = createMockStore({
-      Customers
+      Currencies,
+      UI,
     });
-
   });
 
-  it('Has all the sub modules loaded', () => {
-    const appComponent = renderIntoDocument(
+  it ('Has all the sub modules loaded', () => {
+    const appComponent = renderIntoDocument (
       <Provider store={store}>
-        <AppContainer
-          Customers={Customers}
-          actions={actions}
-        />
+        <AppContainer />
       </Provider>
     );
 
     // Checking if all the submodules are loaded in the DOM
-    const appContainer = scryRenderedDOMComponentsWithClass(
+    const appContainer = scryRenderedDOMComponentsWithClass (
       appComponent,
       'app__container'
     );
-    const shellContainer = scryRenderedDOMComponentsWithClass(
+    const shellContainer = scryRenderedDOMComponentsWithClass (
       appComponent,
       'shell__content'
     );
-    expect(appContainer).to.have.lengthOf(1);
-    expect(shellContainer).to.have.lengthOf(1);
+    expect (appContainer).to.have.lengthOf (1);
+    expect (shellContainer).to.have.lengthOf (1);
   });
 
-  it('Shows loading screen when customers are being fetched', () => {
-    const app = renderIntoDocument(
-      <Provider store={store}>
-        <AppContainer />
-      </Provider>
-    );
-
-    let list = scryRenderedComponentsWithType(app, List);
-    let loader = scryRenderedComponentsWithType(app, Loader);
-    let errorMessageBox = scryRenderedComponentsWithType(app, MessageBox);
-
-    expect(loader).to.have.lengthOf(1);
-    expect(list).to.have.lengthOf(0);
-    expect(errorMessageBox).to.have.lengthOf(0);
+  it ('Gets the exchange rate for the current source and target currencies', () => {
+    const sourceCurrency = Currencies.get ('list')
+      .find (cur => cur.get ('isSource'))
+      .get ('id');
+    const targetCurrency = Currencies.get ('list')
+      .find (cur => cur.get ('isTarget'))
+      .get ('id');
   });
-
-  it('Shows Error message when customers fetch has failed', () => {
-    store = createMockStore({
-      Customers: customersOnFetchingError
-    });
-    const app = renderIntoDocument(
-      <Provider store={store}>
-        <AppContainer />
-      </Provider>
-    );
-
-    let list = scryRenderedComponentsWithType(app, List);
-    let loader = scryRenderedComponentsWithType(app, Loader);
-    let errorMessageBox = scryRenderedComponentsWithType(app, MessageBox);
-
-    expect(loader).to.have.lengthOf(0);
-    expect(list).to.have.lengthOf(0);
-    expect(errorMessageBox).to.have.lengthOf(1);
-  });
-
-  it('Shows customers List when customers fetch is successful', () => {
-    store = createMockStore({
-      Customers: customersWhenSuccessfullyFetched
-    });
-    const app = renderIntoDocument(
-      <Provider store={store}>
-        <AppContainer />
-      </Provider>
-    );
-
-    let list = scryRenderedComponentsWithType(app, List);
-    let loader = scryRenderedComponentsWithType(app, Loader);
-    let errorMessageBox = scryRenderedComponentsWithType(app, MessageBox);
-
-    expect(loader).to.have.lengthOf(0);
-    expect(list).to.have.lengthOf(1);
-    expect(errorMessageBox).to.have.lengthOf(0);
-  });
-
 });

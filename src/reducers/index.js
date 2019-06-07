@@ -1,8 +1,10 @@
 import { combineReducers } from 'redux';
-import Customers from './Customers';
+import Currencies from './Currencies';
+import UI from './UI';
 
 const rootReducer = combineReducers({
-  Customers
+  Currencies,
+  UI
 });
 
 export default rootReducer;

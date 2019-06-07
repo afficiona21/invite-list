@@ -1,8 +1,8 @@
 {
-  "name": "invites",
+  "name": "affxchange",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://afficiona21.github.io/invites",
+  "homepage": "https://afficiona21.github.io/affxchange",
   "dependencies": {
     "classnames": "2.2.5",
     "cross-fetch": "^3.0.1",
@@ -48,7 +48,7 @@
     "copyfiles": "copyfiles -f build/index.html ./",
     "eject": "react-scripts eject",
     "lint": "eslint .",
-    "test": "./node_modules/.bin/mocha --timeout 5000 --compilers js:./test/compiler.js ./test/test_helper.js 'test/**/*.js'",
+    "test": "./node_modules/.bin/mocha --timeout 5000 --compilers js:./test/compiler.js ./test/test_helper.js 'test/actions/**/*.js'",
     "prerelease": "sh bin/prerelease.sh",
     "release": "standard-version",
     "postrelease": "sh bin/postrelease.sh",
@@ -81,6 +81,7 @@
     "fetch-mock": "^7.3.1",
     "gh-pages": "^2.0.1",
     "husky": "0.14.3",
+    "jest": "^24.8.0",
     "jsdom": "9.12.0",
     "lint-staged": "6.0.0",
     "mocha": "3.4.1",
